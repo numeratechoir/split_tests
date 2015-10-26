@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(name='SplitTests',
       entry_points={
           'nose.plugins.0.10': [
-              'splittests=SplitTests'
+              'splittests=split_tests:SplitTests'
           ]
       },
       packages=find_packages(),

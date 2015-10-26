@@ -1,5 +1,6 @@
 from nose.plugins import Plugin
-
+import os
+from hashlib import md5
 
 '''
 plugin should:
@@ -13,19 +14,22 @@ plugin should:
 
 
 class SplitTests(Plugin):
-    enabled = True
-
-    def begin(self):
-        print "BEGIN"
     
-    def options(self, parser, env):
-        super(Plugin, self).options(parser, env)
-        parser.add_option("-c", "--total-cores", type="int")
-        parser.add_option("-i", "--this-core", type="int")
+    def options(self, parser, env=os.environ):
+        super(SplitTests, self).options(parser, env)
+        parser.add_option("--total-cores", type="int", default=1)
+        parser.add_option("--this-core", type="int", default=1)
 
     def configure(self, options, conf):
-        print options
-        print conf
+        super(SplitTests, self).configure(options, conf)
+        if self.enabled:
+            self.total_cores = options.total_cores
+            self.this_core = options.this_core
 
-
-
+    def wantMethod(self, method):
+        if method.__name__[:5] == 'test_':
+            h_int = int(md5(method.__name__).hexdigest(), 16)
+            if h_int % self.total_cores == self.this_core - 1:
+                print "gathering", method.__name__
+                return True
+        return False
