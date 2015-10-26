@@ -30,6 +30,5 @@ class SplitTests(Plugin):
         if method.__name__[:5] == 'test_':
             h_int = int(md5(method.__name__).hexdigest(), 16)
             if h_int % self.total_cores == self.this_core - 1:
-                print "gathering", method.__name__
                 return True
         return False
